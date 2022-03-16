@@ -2,37 +2,60 @@
 
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+// get
+// post
+// put
+// patch
+// delete
 
-// Route::get('/', function () {
-//     return view('welcome');
+// Route::get('uri', 'action');
+// Route::post('uri', 'action');
+// Route::put('uri', 'action');
+// Route::patch('uri', 'action');
+// Route::delete('uri', 'action');
+// Route::options('uri', 'action');
+
+// CRUD => Creat, Read, Update, Delete
+
+// Create => get, post
+// Read => get
+// Read single => get
+// Update => get, put
+// Delete => delete
+
+
+// Route::post('/', function() {
+//     return 'Homepage';
+// });
+
+// Route::put('/', function() {
+//     return 'Homepage';
+// });
+
+// Route::delete('/', function() {
+//     return 'Homepage';
+// });
+
+// Route::get('/', function() {
+//     return 'Homepage';
+// });
+
+// use
+// namespace
+
+// Route::get('/home', function() {
+//     return 'Home Pgae';
 // });
 
 // Route::get('/about', function() {
-//     return 'About Page';
+//     return 'Home Pgae';
 // });
 
+// Route::get('/team', function() {
+//     return 'Home Pgae';
+// });
+
+
 Route::get('/', function() {
-    return 'Home page';
-});
-
-Route::get('/about', function() {
-    return 'About page';
-});
-
-Route::get('/contact', function() {
-    return 'Contact page';
-});
-
-Route::get('/our-team', function() {
-    return 'Our Team';
+    return route('admin.products');
 });
