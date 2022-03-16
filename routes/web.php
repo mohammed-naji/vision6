@@ -32,3 +32,7 @@ Route::get('/about', function() {
 Route::get('/contact', function() {
     return 'Contact page';
 });
+
+Route::get('/our-team', function() {
+    return 'Our Team page';
+});
