@@ -34,5 +34,5 @@ Route::get('/contact', function() {
 });
 
 Route::get('/our-team', function() {
-    return 'Our Team page';
+    return 'Our Team';
 });
