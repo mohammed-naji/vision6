@@ -1,6 +1,8 @@
 <?php
 
+
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TestController;
 
 // get
 // post
@@ -56,6 +58,48 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-Route::get('/', function() {
-    return route('admin.products');
+// Route::get('/', function() {
+//     return route('admin.products');
+// });
+
+// Route::get('blog', function() {
+//     return 'Blog Page';
+// });
+
+// Route::get('/blog/{id?}', function($id = '') {
+//     return 'Blog Page '. $id;
+// });
+
+// Route::get('blog/{id}/{name}', function($hfhfhfhf, $name) {
+//     return 'Blog Page #' . $hfhfhfhf . ' | ' . $name;
+// // })->whereNumber('id');
+// });
+
+// use
+// namespace
+
+Route::get('/', [TestController::class, 'index'])->name('home.index');
+Route::get('/about', [TestController::class, 'about'])->name('home.about');
+Route::get('/contact', [TestController::class, 'contact'])->name('home.contact');
+
+Route::get('user/aaaa/{name}/post/test/{id}/new/comments', function($name, $id) {
+    return 'rrrrr';
+})->name('user.posts');
+
+Route::get('test', function() {
+    $name = 'Ahmed';
+    $id = 12;
+
+    // return url('user/'.$name.'/post/'.$id.'/comments');
+    return route('user.posts', [$name, $id]);
 });
+
+// Route::view('ffff', )
+
+// Route::match(
+//     ['put', 'patch'], 'test' , function() {
+
+//     }
+// );
+
+// Route::any('one')
