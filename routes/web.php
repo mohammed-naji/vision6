@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\Site1Controller;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TestController;
 
@@ -103,3 +103,21 @@ Route::get('test', function() {
 // );
 
 // Route::any('one')
+
+
+Route::prefix('site1')->controller(Site1Controller::class)->name('site1.')->group(function() {
+    Route::get('/', 'index')->name('index');
+    Route::get('/about', 'about')->name('about');
+    Route::get('/contact-us', 'contact')->name('contact');
+    Route::get('/post', 'post')->name('post');
+
+    // Route::get('/', [Site1Controller::class, 'index'])->name('index');
+    // Route::get('/about', [Site1Controller::class, 'about'])->name('about');
+    // Route::get('/contact-us', [Site1Controller::class, 'contact'])->name('contact');
+    // Route::get('/post', [Site1Controller::class, 'post'])->name('post');
+
+
+});
+
+
+// Route::get('admin', function() {});
