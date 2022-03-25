@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FormsController;
 use App\Http\Controllers\Site1Controller;
 use App\Http\Controllers\Site2Controller;
 use Illuminate\Support\Facades\Route;
@@ -131,3 +132,21 @@ Route::prefix('site2')->name('site2.')->controller(Site2Controller::class)->grou
     // Route::get('site2/contact', [Site1Controller::class, 'contact'])->name('contact');
 });
 
+
+Route::get('form1', [FormsController::class, 'form1'])->name('form1');
+Route::post('form1', [FormsController::class, 'form1_submit'])->name('form1_submit');
+
+Route::get('form2', [FormsController::class, 'form2'])->name('form2');
+Route::post('form2', [FormsController::class, 'form2_submit'])->name('form2_submit');
+
+Route::get('form3', [FormsController::class, 'form3'])->name('form3');
+Route::post('form3', [FormsController::class, 'form3_submit'])->name('form3_submit');
+
+Route::get('form4', [FormsController::class, 'form4'])->name('form4');
+Route::post('form4', [FormsController::class, 'form4_submit'])->name('form4_submit');
+
+
+Route::get('name', function() {
+    $letters = range('a', 'h');
+    dd($letters[ rand(0,  count($letters) - 1 ) ]);
+});
