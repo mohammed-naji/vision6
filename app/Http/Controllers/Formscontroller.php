@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TestMail;
+use App\Rules\CheckWordCount;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class FormsController extends Controller
 {
@@ -79,4 +82,49 @@ class FormsController extends Controller
         return 'Done';
     }
 
+
+    public function form5()
+    {
+        return view('forms.form5');
+    }
+
+    public function form5_submit(Request $request)
+    {
+        // form validation
+        $request->validate([
+            'name' => 'required|min:3|max:30',
+            'email' => ['required', 'email'],
+            'password' => 'required|min:6|confirmed',
+            'bio' => ['nullable', new CheckWordCount(10)]
+        ]);
+
+        dd($request->all());
+
+    }
+
+    public function form6()
+    {
+        return view('forms.form6');
+    }
+
+    public function form6_submit(Request $request)
+    {
+        // check the inputs
+        $request->validate([
+            'name' => 'required',
+            'age' => 'required',
+            'image' => 'required|image|mimes:png,jpg|max:2048',
+        ]);
+
+        $name = $request->name;
+        $age = $request->age;
+
+        // upload the file
+        $ex = $request->file('image')->getClientOriginalExtension();
+        $new_name = rand().rand().'.'.$ex;
+        $request->file('image')->move(public_path('uploads/images'), $new_name);
+
+        // send the email
+        Mail::to('admin@admin.com')->send(new TestMail($name, $age, $new_name));
+    }
 }

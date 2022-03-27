@@ -13,6 +13,7 @@
 
     <div class="container">
         <h1>Form </h1>
+        @include('forms.errors')
         <form action="{{ route('form4_submit') }}" method="POST">
             @csrf
 

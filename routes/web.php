@@ -150,3 +150,9 @@ Route::get('name', function() {
     $letters = range('a', 'h');
     dd($letters[ rand(0,  count($letters) - 1 ) ]);
 });
+
+Route::get('form5', [FormsController::class, 'form5'])->name('form5');
+Route::post('form5', [FormsController::class, 'form5_submit'])->name('form5_submit');
+
+Route::get('form6', [FormsController::class, 'form6'])->name('form6');
+Route::post('form6', [FormsController::class, 'form6_submit'])->name('form6_submit');
