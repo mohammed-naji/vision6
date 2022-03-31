@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\FormsController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Site1Controller;
 use App\Http\Controllers\Site2Controller;
 use Illuminate\Support\Facades\Route;
@@ -156,3 +157,20 @@ Route::post('form5', [FormsController::class, 'form5_submit'])->name('form5_subm
 
 Route::get('form6', [FormsController::class, 'form6'])->name('form6');
 Route::post('form6', [FormsController::class, 'form6_submit'])->name('form6_submit');
+
+
+// CRUD Application
+// Route::get('products', [ProductController::class, 'index'])->name('products.index');
+// Route::get('products/{id}', [ProductController::class, 'show'])->name('products.show');
+
+// Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
+// Route::post('products/store', [ProductController::class, 'store'])->name('products.store');
+
+// Route::get('products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
+// Route::put('products/{id}/update', [ProductController::class, 'update'])->name('products.update');
+
+// Route::delete('products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+
+
+Route::resource('products', ProductController::class);
