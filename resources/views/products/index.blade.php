@@ -16,21 +16,63 @@
     </style>
 </head>
 <body>
+
+    {{-- @dump(session('msg')) --}}
+    @if (session('msg'))
+    <div class="alert alert-success">
+        <p class="m-0">{{ session('msg') }}</p>
+    </div>
+    @endif
+
+
     <div class="container my-5">
         <h1>All Products</h1>
-        <div class="my-3">
-            <form action="{{ route('products.index') }}" method="get">
-                <div class="input-group mb-3">
-                    <select name="col">
-                        <option value="name">Name</option>
-                        <option value="price" selected>Price</option>
-                        <option value="discount">Discount</option>
-                    </select>
-                    <input type="text" class="form-control" name="keyword" value="{{ request()->keyword }}" placeholder="Search by anything">
-                    <button class="btn btn-outline-success" type="submit">Search</button>
-                  </div>
-            </form>
+        <div class="my-3 row">
+            <div class="col-md-9 px-1">
+                <form id="search-form" action="{{ route('mohammed_naji') }}" method="get">
+                    <input type="hidden" name="sort" id="sort-feild" value="{{ request()->sort??'asc' }}" />
+                    <input type="hidden" name="perpage" id="perpage-feild" value="{{ request()->perpage??5 }}" />
+                    <input type="hidden" name="page" value="{{ request()->page }}" />
+                    <div class="input-group mb-3">
+                        <select name="col">
+                            <option value="name" {{ request()->col == 'name' ? 'selected' : '' }}>Name</option>
+                            <option value="price" {{ request()->col == 'price' ? 'selected' : '' }}>Price</option>
+                            <option value="discount" {{ request()->col == 'discount' ? 'selected' : '' }}>Discount</option>
+                        </select>
+
+
+                        <input type="text" class="form-control" name="keyword" value="{{ request()->keyword }}" placeholder="Search by anything">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                      </div>
+                </form>
+            </div>
+            <div class="col-md-2 px-1">
+                <select id="sort" class="form-select">
+                    <option value="asc" {{ request()->sort == 'asc' ? 'selected' : '' }}>Ascending</option>
+                    <option value="desc" {{ request()->sort == 'desc' ? 'selected' : '' }}>Descending</option>
+                </select>
+            </div>
+            {{-- {{ $items_count }} --}}
+            <div class="col-md-1 px-1">
+
+                @if ($items_count > 5)
+                <select id="perpage" class="form-select">
+                    @for ($i = 5; $i <= $items_count; $i+=5)
+                    <option value="{{ $i }}" {{ request()->perpage == $i ? 'selected' : '' }}>{{ $i }}</option>
+                    @if ($i >= 30)
+                        @break
+                    @endif
+                    @endfor
+                    @if ($items_count % 5 != 0 && $i != 30)
+                    <option value="{{ $i }}" {{ request()->perpage == $i ? 'selected' : '' }}>{{ $i }}</option>
+                    @endif
+                </select>
+                @endif
+
+
+            </div>
         </div>
+        <a href="{{ route('mohammed_naji') }}" class="btn btn-warning">Clear</a>
         <table class="table table-bordered table-striped table-hover">
             <thead>
                 <tr class="table-dark">
@@ -52,7 +94,14 @@
                         <td>{{ $product->discount }}</td>
                         <td>
                             <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
-                            <a href="#" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+                            {{-- <a href="{{ route('products.destroy', $product->id) }}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a> --}}
+                            <form class="d-inline" action="{{ route('products.destroy', $product->id) }}" method="POST">
+                                @csrf
+                                {{-- @method('delete')
+                                <input type="hidden" name="_method" value="delete" /> --}}
+                                {{ method_field('delete') }}
+                                <button onclick="return confirm('هل انت متاكد اخوي ؟')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                            </form>
                         </td>
                     </tr>
                 @endforeach
@@ -60,7 +109,7 @@
             </tbody>
         </table>
 
-        {{ $products->links() }}
+        {{ $products->appends($_GET)->links() }}
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -68,6 +117,19 @@
     <script>
         $(document).ready( function () {
             // $('table').DataTable();
+
+            $('#sort').change(function() {
+                var sort = $(this).val();
+                $('#sort-feild').val(sort)
+                $('#search-form').submit();
+            })
+
+            $('#perpage').change(function() {
+                var perpage = $(this).val();
+                $('#perpage-feild').val(perpage)
+                $('#search-form').submit();
+            })
+
         } );
     </script>
 </body>

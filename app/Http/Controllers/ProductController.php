@@ -14,14 +14,21 @@ class ProductController extends Controller
      */
     public function index()
     {
+        $items_count = Product::count();
+        // $items_count = 103;
+        // dd(request()->sort??'new');
         if(request()->has('keyword')) {
             // $products = Product::where('name', 'like', '%'.request()->keyword .'%')->orWhere('price', 'like', '%'.request()->keyword .'%')->paginate(5);
-            $products = Product::where(request()->col, 'like', '%'.request()->keyword .'%')->paginate(5);
+            $keyword = '%'.request()->keyword .'%';
+            if(request()->col == 'price') {
+                $keyword = number_format(request()->keyword, 3);
+            }
+            $products = Product::where(request()->col, 'like', $keyword)->orderBy(request()->col, request()->sort??'asc')->paginate(request()->perpage??5);
         }else {
-            $products = Product::paginate(5);
+            $products = Product::paginate(request()->perpage??5);
         }
 
-        return view('products.index', compact('products'));
+        return view('products.index', compact('products', 'items_count'));
     }
 
     /**
@@ -52,7 +59,7 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        return 'Showwwwww';
     }
 
     /**
@@ -86,6 +93,7 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Product::destroy($id);
+        return redirect()->route('mohammed_naji')->with('msg', 'Product Deleted Successfully');
     }
 }

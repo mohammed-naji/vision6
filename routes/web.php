@@ -173,4 +173,6 @@ Route::post('form6', [FormsController::class, 'form6_submit'])->name('form6_subm
 
 
 
-Route::resource('products', ProductController::class);
+Route::resource('products', ProductController::class)->names([
+    'index' => 'mohammed_naji'
+]);
