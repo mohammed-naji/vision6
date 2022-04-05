@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
 {
@@ -38,7 +39,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return view('products.create');
     }
 
     /**
@@ -49,6 +50,30 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required',
+            'image' => 'required',
+            'description' => 'required',
+            'price' => 'required',
+        ]);
+
+        $new_name = rand().rand().'_'.$request->file('image')->getClientOriginalName();
+        $request->file('image')->move(public_path('uploads/images'), $new_name);
+
+        $item = Product::create([
+            'name' => $request->name,
+            'image' => $new_name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'discount' => $request->discount,
+        ]);
+        if($item) {
+            return redirect()->back()->with('msg', 'Product added successfully')->with('icon', 'info');
+        }else {
+            return redirect()->back()->with('msg', 'Product not added')->with('icon', 'error');
+        }
+
+
     }
 
     /**
@@ -93,7 +118,15 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        Product::destroy($id);
+        // Product::destroy($id);
+        $product = Product::find($id);
+        $image = $product->image;
+        if($image && file_exists(public_path('uploads/images/').$image)) {
+            File::delete(public_path('uploads/images/').$image);
+        }
+        // unlink()
+        $product->delete();
+
         return redirect()->route('mohammed_naji')->with('msg', 'Product Deleted Successfully');
     }
 }

@@ -16,17 +16,23 @@
     </style>
 </head>
 <body>
+    <section style="height: 1000px"></section>
 
     {{-- @dump(session('msg')) --}}
-    @if (session('msg'))
-    <div class="alert alert-success">
-        <p class="m-0">{{ session('msg') }}</p>
-    </div>
-    @endif
 
 
     <div class="container my-5">
-        <h1>All Products</h1>
+        @if (session('msg'))
+        <div class="alert alert-success">
+            <p class="m-0">{{ session('msg') }}</p>
+        </div>
+        @endif
+
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>All Products</h1>
+            <a href="{{ route('products.create') }}" class="btn btn-dark px-5">Add new product</a>
+        </div>
+
         <div class="my-3 row">
             <div class="col-md-9 px-1">
                 <form id="search-form" action="{{ route('mohammed_naji') }}" method="get">
@@ -73,6 +79,7 @@
             </div>
         </div>
         <a href="{{ route('mohammed_naji') }}" class="btn btn-warning">Clear</a>
+        {{-- {{ $products->count() }} --}}
         <table class="table table-bordered table-striped table-hover">
             <thead>
                 <tr class="table-dark">
@@ -85,11 +92,12 @@
                 </tr>
             </thead>
             <tbody>
+                @if ($products->count() > 0)
                 @foreach ($products as $product)
                     <tr>
                         <td>{{ $product->id }}</td>
                         <td>{{ $product->name }}</td>
-                        <td><img width="80" src="{{ $product->image }}" alt=""></td>
+                        <td><img width="80" src="{{ asset('uploads/images/'.$product->image) }}" alt=""></td>
                         <td>{{ $product->price }}</td>
                         <td>{{ $product->discount }}</td>
                         <td>
@@ -97,14 +105,41 @@
                             {{-- <a href="{{ route('products.destroy', $product->id) }}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a> --}}
                             <form class="d-inline" action="{{ route('products.destroy', $product->id) }}" method="POST">
                                 @csrf
-                                {{-- @method('delete')
-                                <input type="hidden" name="_method" value="delete" /> --}}
-                                {{ method_field('delete') }}
+                                @method('delete')
+                                {{-- <input type="hidden" name="_method" value="delete" />
+                                {{ method_field('delete') }} --}}
                                 <button onclick="return confirm('هل انت متاكد اخوي ؟')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
                             </form>
                         </td>
                     </tr>
                 @endforeach
+                @else
+                    <tr>
+                        <td colspan="6" class="text-center">No Data Found</td>
+                    </tr>
+                @endif
+
+                {{-- @forelse ($products as $product)
+                <tr>
+                    <td>{{ $product->id }}</td>
+                    <td>{{ $product->name }}</td>
+                    <td><img width="80" src="{{ $product->image }}" alt=""></td>
+                    <td>{{ $product->price }}</td>
+                    <td>{{ $product->discount }}</td>
+                    <td>
+                        <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+                        <form class="d-inline" action="{{ route('products.destroy', $product->id) }}" method="POST">
+                            @csrf
+                            @method('delete')
+                            <button onclick="return confirm('هل انت متاكد اخوي ؟')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="6" class="text-center">No Data Found</td>
+                </tr>
+                @endforelse --}}
 
             </tbody>
         </table>
@@ -114,7 +149,34 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+
+        @if (session('msg'))
+        $('html, body').animate({
+            scrollTop: $('.alert-success').offset().top
+        }, 700)
+        @endif
+
+        const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+        })
+
+        @if (session('msg'))
+        Toast.fire({
+        icon: 'success',
+        title: '{{ session("msg") }}'
+        })
+        @endif
+
         $(document).ready( function () {
             // $('table').DataTable();
 
