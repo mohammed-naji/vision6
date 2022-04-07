@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
@@ -24,9 +25,10 @@ class ProductController extends Controller
             if(request()->col == 'price') {
                 $keyword = number_format(request()->keyword, 3);
             }
-            $products = Product::where(request()->col, 'like', $keyword)->orderBy(request()->col, request()->sort??'asc')->paginate(request()->perpage??5);
+            $products = Product::where(request()->col, 'like', $keyword)->orderBy(request()->col, request()->sort??'asc')->latest()->paginate(request()->perpage??5);
         }else {
-            $products = Product::paginate(request()->perpage??5);
+            // $products = Product::latest()->paginate(request()->perpage??5);
+            $products = Product::orderBy('id', 'desc')->paginate(request()->perpage??5);
         }
 
         return view('products.index', compact('products', 'items_count'));
@@ -39,7 +41,10 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return view('products.create');
+        $categories = Category::select('id', 'name')->get();
+        // $categories = Category::all();
+        // dd($categories);
+        return view('products.create', compact('categories'));
     }
 
     /**
@@ -50,11 +55,13 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'name' => 'required',
-            'image' => 'required',
+            'image' => 'required|image|mimes:png,jpg,svg',
             'description' => 'required',
             'price' => 'required',
+            'category_id' => 'required'
         ]);
 
         $new_name = rand().rand().'_'.$request->file('image')->getClientOriginalName();
@@ -66,6 +73,7 @@ class ProductController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'discount' => $request->discount,
+            'category_id' => $request->category_id,
         ]);
         if($item) {
             return redirect()->back()->with('msg', 'Product added successfully')->with('icon', 'info');
@@ -95,7 +103,13 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
-        //
+        $product = Product::findOrFail($id);
+        $categories = Category::select('id', 'name')->get();
+        // if(!$product) {
+        //     abort(404);
+        // }
+
+        return view('products.edit', compact('product', 'categories'));
     }
 
     /**
@@ -107,7 +121,41 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'image' => 'nullable|image|mimes:png,jpg,svg',
+            'description' => 'required',
+            'price' => 'required',
+            'category_id' => 'required'
+        ]);
+
+        $product = Product::findOrFail($id);
+        $new_name = $product->image;
+        if($request->has('image')) {
+            if($new_name && file_exists(public_path('uploads/images/').$new_name)) {
+                File::delete(public_path('uploads/images/').$new_name);
+            }
+
+
+            $new_name = rand().rand().'_'.$request->file('image')->getClientOriginalName();
+            $request->file('image')->move(public_path('uploads/images'), $new_name);
+
+
+        }
+
+        $item = $product->update([
+            'name' => $request->name,
+            'image' => $new_name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'discount' => $request->discount,
+            'category_id' => $request->category_id,
+        ]);
+        if($item) {
+            return redirect()->back()->with('msg', 'Product updated successfully')->with('icon', 'success');
+        }else {
+            return redirect()->back()->with('msg', 'Product not added')->with('icon', 'error');
+        }
     }
 
     /**

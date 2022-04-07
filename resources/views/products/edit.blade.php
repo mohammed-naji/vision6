@@ -14,51 +14,55 @@
 
     <div class="container my-5">
         <div class="d-flex justify-content-between align-items-center">
-            <h1>Add New Product</h1>
+            <h1>Update Product <span class="text-danger">{{ $product->name }}</span></h1>
             {{-- <a href="{{ route('mohammed_naji') }}" class="btn btn-dark px-5">Return Back</a> --}}
             <a onclick="history.back()" class="btn btn-dark px-5">Return Back</a>
         </div>
 
         @include('forms.errors')
 
-        <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
+            @method('put')
             <div class="mb-3">
                 <label>Name</label>
-                <input type="text" name="name" class="form-control" value="{{ old('name') }}" placeholder="Name">
+                <input type="text" name="name" class="form-control" value="{{ old('name', $product->name) }}" placeholder="Name">
             </div>
 
             <div class="mb-3">
                 <label>Image</label>
                 <input type="file" name="image" class="form-control">
+                <img class="img-thumbnail mt-1" width="80" src="{{ asset('uploads/images/'.$product->image) }}" alt="">
             </div>
 
             <div class="mb-3">
                 <label>Description</label>
-                <textarea name="description" class="form-control" placeholder="Name" rows="5">{{ old('description') }}</textarea>
+                <textarea name="description" class="form-control" placeholder="Name" rows="5">{{ old('description', $product->description) }}</textarea>
             </div>
 
             <div class="mb-3">
                 <label>Price</label>
-                <input type="text" name="price" class="form-control" placeholder="Price" value="{{ old('price') }}">
+                <input type="text" name="price" class="form-control" placeholder="Price" value="{{ old('price', $product->price) }}">
             </div>
 
             <div class="mb-3">
                 <label>Discount</label>
-                <input type="text" name="discount" class="form-control" placeholder="Discount" value="{{ old('discount') }}">
+                <input type="text" name="discount" class="form-control" placeholder="Discount" value="{{ old('discount', $product->discount) }}">
             </div>
 
             <div class="mb-3">
                 <label>Category</label>
+
                 <select name="category_id" class="form-control" >
                     <option disabled selected>--Select--</option>
                     @foreach ($categories as $category)
-                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                    <option {{ $product->category_id == $category->id ? 'selected' : '' }} value="{{ $category->id }}">{{ $category->name }}</option>
                     @endforeach
                 </select>
                 {{-- <input type="text" name="discount" class="form-control" placeholder="Discount" value="{{ old('discount') }}"> --}}
             </div>
-            <button class="btn btn-success">Add</button>
+
+            <button class="btn btn-info">Update</button>
         </form>
     </div>
 
@@ -74,9 +78,9 @@
         });
         @endif
 
-        // tinymce.init({
-        //   selector: 'textarea'
-        // });
+        tinymce.init({
+          selector: 'textarea'
+        });
       </script>
 </body>
 </html>

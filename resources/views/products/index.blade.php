@@ -16,7 +16,7 @@
     </style>
 </head>
 <body>
-    <section style="height: 1000px"></section>
+    {{-- <section style="height: 1000px"></section> --}}
 
     {{-- @dump(session('msg')) --}}
 
@@ -88,6 +88,7 @@
                     <th>Image</th>
                     <th>Price</th>
                     <th>Discount</th>
+                    <th>Category</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -100,8 +101,9 @@
                         <td><img width="80" src="{{ asset('uploads/images/'.$product->image) }}" alt=""></td>
                         <td>{{ $product->price }}</td>
                         <td>{{ $product->discount }}</td>
+                        <td>{{ $product->category_id }}</td>
                         <td>
-                            <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
+                            <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
                             {{-- <a href="{{ route('products.destroy', $product->id) }}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a> --}}
                             <form class="d-inline" action="{{ route('products.destroy', $product->id) }}" method="POST">
                                 @csrf
@@ -152,11 +154,11 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
 
-        @if (session('msg'))
-        $('html, body').animate({
-            scrollTop: $('.alert-success').offset().top
-        }, 700)
-        @endif
+        // @if (session('msg'))
+        // $('html, body').animate({
+        //     scrollTop: $('.alert-success').offset().top
+        // }, 700)
+        // @endif
 
         const Toast = Swal.mixin({
         toast: true,
