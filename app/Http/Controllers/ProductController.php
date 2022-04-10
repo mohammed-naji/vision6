@@ -26,6 +26,7 @@ class ProductController extends Controller
                 $keyword = number_format(request()->keyword, 3);
             }
             $products = Product::where(request()->col, 'like', $keyword)->orderBy(request()->col, request()->sort??'asc')->latest()->paginate(request()->perpage??5);
+            return view('products._table', compact('products', 'items_count'))->render();
         }else {
             // $products = Product::latest()->paginate(request()->perpage??5);
             $products = Product::orderBy('id', 'desc')->paginate(request()->perpage??5);
@@ -175,6 +176,12 @@ class ProductController extends Controller
         // unlink()
         $product->delete();
 
-        return redirect()->route('mohammed_naji')->with('msg', 'Product Deleted Successfully');
+        // return redirect()->route('mohammed_naji')->with('msg', 'Product Deleted Successfully');
+        return 'Product Deleted Successfully';
+    }
+
+    public function show_msg()
+    {
+        return 'Mohammed Naji';
     }
 }

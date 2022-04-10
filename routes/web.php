@@ -176,3 +176,6 @@ Route::post('form6', [FormsController::class, 'form6_submit'])->name('form6_subm
 Route::resource('products', ProductController::class)->names([
     'index' => 'mohammed_naji'
 ]);
+
+
+Route::get('show_msg', [ProductController::class, 'show_msg'])->name('show_msg');

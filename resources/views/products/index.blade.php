@@ -80,73 +80,13 @@
         </div>
         <a href="{{ route('mohammed_naji') }}" class="btn btn-warning">Clear</a>
         {{-- {{ $products->count() }} --}}
-        <table class="table table-bordered table-striped table-hover">
-            <thead>
-                <tr class="table-dark">
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Image</th>
-                    <th>Price</th>
-                    <th>Discount</th>
-                    <th>Category</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if ($products->count() > 0)
-                @foreach ($products as $product)
-                    <tr>
-                        <td>{{ $product->id }}</td>
-                        <td>{{ $product->name }}</td>
-                        <td><img width="80" src="{{ asset('uploads/images/'.$product->image) }}" alt=""></td>
-                        <td>{{ $product->price }}</td>
-                        <td>{{ $product->discount }}</td>
-                        <td>{{ $product->category_id }}</td>
-                        <td>
-                            <a href="{{ route('products.edit', $product->id) }}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
-                            {{-- <a href="{{ route('products.destroy', $product->id) }}" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a> --}}
-                            <form class="d-inline" action="{{ route('products.destroy', $product->id) }}" method="POST">
-                                @csrf
-                                @method('delete')
-                                {{-- <input type="hidden" name="_method" value="delete" />
-                                {{ method_field('delete') }} --}}
-                                <button onclick="return confirm('هل انت متاكد اخوي ؟')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-                @else
-                    <tr>
-                        <td colspan="6" class="text-center">No Data Found</td>
-                    </tr>
-                @endif
 
-                {{-- @forelse ($products as $product)
-                <tr>
-                    <td>{{ $product->id }}</td>
-                    <td>{{ $product->name }}</td>
-                    <td><img width="80" src="{{ $product->image }}" alt=""></td>
-                    <td>{{ $product->price }}</td>
-                    <td>{{ $product->discount }}</td>
-                    <td>
-                        <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></a>
-                        <form class="d-inline" action="{{ route('products.destroy', $product->id) }}" method="POST">
-                            @csrf
-                            @method('delete')
-                            <button onclick="return confirm('هل انت متاكد اخوي ؟')" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6" class="text-center">No Data Found</td>
-                </tr>
-                @endforelse --}}
-
-            </tbody>
-        </table>
-
-        {{ $products->appends($_GET)->links() }}
+        <div class="content-wrapper">
+            @include('products._table');
+        </div>
+{{--
+        <a href="{{ route('show_msg') }}" id="btn" class="btn btn-success">Load Data From Controller</a>
+        <p id="show_msg"></p> --}}
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -180,7 +120,65 @@
         @endif
 
         $(document).ready( function () {
+            $('.btn-delete').click(function(e) {
+                e.preventDefault();
+                var btn = $(this);
+                var del_url = $(this).attr('href');
+
+                var empty_tr = `<tr>
+                        <td colspan="7" class="text-center">No Data Found</td>
+                    </tr>`;
+
+                if(confirm('Aru you sure?!')) {
+                    $.ajax({
+                        type: 'post',
+                        url: del_url,
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            _method: 'delete'
+                        },
+                        success: function(res) {
+                            // btn.parent().parent().remove();
+                            Toast.fire({
+                                icon: 'success',
+                                title: res
+                            })
+                            btn.parents('tr').remove();
+                            if($('table tbody tr').length == 0) {
+                                $('table tbody').append(empty_tr);
+                            }
+                        }
+                    })
+                }
+                // console.log(url);
+
+                // alert(99);
+            })
+
+
             // $('table').DataTable();
+
+            /*
+
+            $(selctor).event(function() {
+                action
+            })
+
+            */
+
+            // $('#btn').click(function(e) {
+            //     e.preventDefault();
+
+            //     $.ajax({
+            //         type: 'get',
+            //         url: '{{ route("show_msg") }}',
+            //         success: function(aa) {
+            //             $('#show_msg').text(aa);
+            //         }
+            //     })
+
+            //     // alert(5);
+            // })
 
             $('#sort').change(function() {
                 var sort = $(this).val();
@@ -193,6 +191,30 @@
                 $('#perpage-feild').val(perpage)
                 $('#search-form').submit();
             })
+
+
+            $('form').submit(function(e) {
+                e.preventDefault();
+            })
+
+            $('input[name=keyword]').keyup(function(e) {
+                // e.preventDefault();
+                var data = $(this).parents('form').serialize();
+                console.log(data);
+
+                $.ajax({
+                    type: 'get',
+                    url: '{{ route("mohammed_naji") }}',
+                    data: data,
+                    success: function(res) {
+                        $('.content-wrapper').html(res);
+                    }
+                })
+            })
+
+
+
+
 
         } );
     </script>
