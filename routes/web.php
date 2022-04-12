@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\FormsController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RelationController;
 use App\Http\Controllers\Site1Controller;
 use App\Http\Controllers\Site2Controller;
 use Illuminate\Support\Facades\Route;
@@ -179,3 +180,6 @@ Route::resource('products', ProductController::class)->names([
 
 
 Route::get('show_msg', [ProductController::class, 'show_msg'])->name('show_msg');
+
+
+Route::get('one-to-one', [RelationController::class, 'one_to_one']);
