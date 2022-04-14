@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Insurance;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -22,4 +23,21 @@ class RelationController extends Controller
         // $insurances = Insurance::get();
         return view('relation.one_to_one', compact('insurances'));
     }
+
+    public function all_products()
+    {
+        $products = Product::with('comments.user')->get();
+        return view('relation.all_products', compact('products'));
+    }
+
+    public function single_products($id)
+    {
+        $product = Product::with('comments.user')->find($id);
+
+        $next_prod = Product::where('id', '>' ,$product->id)->first();
+        $prev_prod = Product::where('id', '<' ,$product->id)->orderBy('id', 'desc')->first();
+
+        return view('relation.single_products', compact('product', 'next_prod', 'prev_prod'));
+    }
+
 }

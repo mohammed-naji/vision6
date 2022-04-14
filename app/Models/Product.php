@@ -14,4 +14,9 @@ class Product extends Model
     // protected $fillable = ['name', 'image', 'description', 'price', 'discount', 'category_id'];
     protected $guarded = [];
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'product_id');
+    }
+
 }
