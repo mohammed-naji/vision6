@@ -34,6 +34,11 @@
             </div>
 
             <div class="mb-3">
+                <label>Gallery</label>
+                <input type="file" name="gallery[]" multiple class="form-control">
+            </div>
+
+            <div class="mb-3">
                 <label>Description</label>
                 <textarea name="description" class="form-control" placeholder="Name" rows="5">{{ old('description') }}</textarea>
             </div>
@@ -45,7 +50,7 @@
 
             <div class="mb-3">
                 <label>Discount</label>
-                <input type="text" name="discount" class="form-control" placeholder="Discount" value="{{ old('discount') }}">
+                <input type="number" name="discount" class="form-control" placeholder="Discount" value="{{ old('discount') }}">
             </div>
 
             <div class="mb-3">

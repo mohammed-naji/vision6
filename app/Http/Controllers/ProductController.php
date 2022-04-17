@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
@@ -68,7 +69,7 @@ class ProductController extends Controller
         $new_name = rand().rand().'_'.$request->file('image')->getClientOriginalName();
         $request->file('image')->move(public_path('uploads/images'), $new_name);
 
-        $item = Product::create([
+        $product = Product::create([
             'name' => $request->name,
             'image' => $new_name,
             'description' => $request->description,
@@ -76,7 +77,19 @@ class ProductController extends Controller
             'discount' => $request->discount,
             'category_id' => $request->category_id,
         ]);
-        if($item) {
+
+        if($request->has('gallery')) {
+            foreach($request->gallery as $item) {
+                $gallery_name = rand().rand().'_'.$item->getClientOriginalName();
+                $item->move(public_path('uploads/images'), $gallery_name);
+                Image::create([
+                    'path' => $gallery_name,
+                    'product_id' => $product->id
+                ]);
+            }
+        }
+
+        if($product) {
             return redirect()->back()->with('msg', 'Product added successfully')->with('icon', 'info');
         }else {
             return redirect()->back()->with('msg', 'Product not added')->with('icon', 'error');
@@ -152,6 +165,17 @@ class ProductController extends Controller
             'discount' => $request->discount,
             'category_id' => $request->category_id,
         ]);
+
+        if($request->has('gallery')) {
+            foreach($request->gallery as $item) {
+                $gallery_name = rand().rand().'_'.$item->getClientOriginalName();
+                $item->move(public_path('uploads/images'), $gallery_name);
+                Image::create([
+                    'path' => $gallery_name,
+                    'product_id' => $id
+                ]);
+            }
+        }
         if($item) {
             return redirect()->back()->with('msg', 'Product updated successfully')->with('icon', 'success');
         }else {
@@ -183,5 +207,10 @@ class ProductController extends Controller
     public function show_msg()
     {
         return 'Mohammed Naji';
+    }
+
+    public function delete_image($id)
+    {
+        return Image::destroy($id);
     }
 }

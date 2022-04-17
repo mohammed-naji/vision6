@@ -36,6 +36,7 @@
                       {{-- <p class="card-text">{{ Str::substr($product->description, 0, 20) . '...' }}</p> --}}
                       <p class="card-text">{{ Str::words($product->description, 5, '...')}}</p>
                       <a href="{{ route('single_products', $product->id) }}" class="btn btn-primary">Read More</a>
+                      {{-- @dump($product->images) --}}
                     </div>
                   </div>
             </div>

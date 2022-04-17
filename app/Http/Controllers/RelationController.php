@@ -26,7 +26,7 @@ class RelationController extends Controller
 
     public function all_products()
     {
-        $products = Product::with('comments.user')->get();
+        $products = Product::with('comments.user', 'images')->get();
         return view('relation.all_products', compact('products'));
     }
 
@@ -38,6 +38,13 @@ class RelationController extends Controller
         $prev_prod = Product::where('id', '<' ,$product->id)->orderBy('id', 'desc')->first();
 
         return view('relation.single_products', compact('product', 'next_prod', 'prev_prod'));
+    }
+
+    public function one_to_many()
+    {
+        $user = User::find(1);
+
+        dd($user->comments);
     }
 
 }

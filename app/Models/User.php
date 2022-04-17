@@ -46,4 +46,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Insurance::class, 'u_id');
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

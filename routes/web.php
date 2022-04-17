@@ -183,6 +183,9 @@ Route::get('show_msg', [ProductController::class, 'show_msg'])->name('show_msg')
 
 
 Route::get('one-to-one', [RelationController::class, 'one_to_one']);
+Route::get('one-to-many', [RelationController::class, 'one_to_many']);
 
 Route::get('all-products', [RelationController::class, 'all_products'])->name('all_products');
 Route::get('all-products/{id}', [RelationController::class, 'single_products'])->name('single_products');
+
+Route::delete('delete-image/{id}', [ProductController::class, 'delete_image']);

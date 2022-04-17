@@ -50,6 +50,39 @@
         .next:hover {
             right: 0px;
         }
+
+        .product-gallery {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .product-gallery img {
+            width: 120px;
+            height: 80px;
+            margin: 10px;
+            object-fit: contain;
+            border: 1px solid #eee;
+            padding: 10px;
+        }
+
+        #main-image {
+            height: 400px;
+            object-fit: contain;
+        }
+
+        @media (max-width: 767px) {
+            .product-gallery li {
+                width: 50%;
+            }
+
+            .product-gallery img {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -67,8 +100,21 @@
 
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <img class="w-100 mb-5" src="{{ asset('uploads/images/'.$product->image) }}" alt="">
-                <p>{{ $product->description }}</p>
+                <img id="main-image" class="w-100 mb-5" src="{{ asset('uploads/images/'.$product->image) }}" alt="">
+
+
+                @if ($product->images->count() > 0)
+                <ul class="product-gallery">
+                    @foreach ($product->images as $image)
+                        <li><img onclick="changeImage('{{ asset('uploads/images/'.$image->path) }}')" src="{{ asset('uploads/images/'.$image->path) }}" alt=""></li>
+                    @endforeach
+                </ul>
+
+                @endif
+
+
+                {!! $product->description !!}
+                {{-- {{  $product->description  }} --}}
 
                 <hr>
                 <h2>All Comments ({{ $product->comments->count() }})</h2>
@@ -91,5 +137,14 @@
         </div>
     </div>
 
+    <script>
+
+function changeImage(path) {
+    // console.log(path);
+
+    document.querySelector('#main-image').src = path;
+}
+
+    </script>
 </body>
 </html>

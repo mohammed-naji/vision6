@@ -8,6 +8,40 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <style>
+
+.single-image {
+    position: relative;
+    display: inline-block;
+}
+
+        .single-image img {
+            height: 60px;
+            object-fit: contain;
+        }
+
+        .single-image button {
+            background: transparent;
+            border: 0;
+            font-size: 8px;
+            width: 18px;
+            height: 18px;
+            background: #f00;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            right: 0;
+            opacity: 0.4;
+            transition: all 2s ease;
+        }
+        .single-image button:hover {
+            opacity: 1;
+        }
+    </style>
 </head>
 <body>
 
@@ -33,6 +67,18 @@
                 <label>Image</label>
                 <input type="file" name="image" class="form-control">
                 <img class="img-thumbnail mt-1" width="80" src="{{ asset('uploads/images/'.$product->image) }}" alt="">
+            </div>
+
+            <div class="mb-3">
+                <label>Gallery</label>
+                <input type="file" name="gallery[]" multiple class="form-control">
+
+                @foreach ($product->images as $image)
+                <span class="single-image">
+                    <button data-id="{{ $image->id }}"><i class="fas fa-trash"></i></button>
+                    <img class="img-thumbnail mt-1" width="80" src="{{ asset('uploads/images/'.$image->path) }}" alt="">
+                </span>
+                @endforeach
             </div>
 
             <div class="mb-3">
@@ -68,8 +114,54 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.0.1/tinymce.min.js" referrerpolicy="origin"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+        $('.single-image button').click(function(e) {
+            // alert(8)
+
+            e.preventDefault();
+            var id = $(this).data('id');
+            var btn = $(this);
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+            if (result.isConfirmed) {
+
+                $.ajax({
+                    type: 'post',
+                    url: '{{ url("delete-image") }}/'+id,
+                    data: {
+                        _method: 'delete',
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(res) {
+                        btn.parent().remove();
+                        Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                        )
+                    }
+                })
+
+
+                }
+            })
+
+
+            // if(confirm('Are You Sure?')) {
+
+            // }
+        })
+
         @if (session('msg'))
             Swal.fire({
             title: 'Good job!',
