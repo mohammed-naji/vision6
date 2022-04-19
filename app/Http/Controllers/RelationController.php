@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Insurance;
 use App\Models\Product;
+use App\Models\Student;
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -47,4 +49,24 @@ class RelationController extends Controller
         dd($user->comments);
     }
 
+    public function register_subjects()
+    {
+        $subjects = Subject::all();
+        $student = Student::find(1);
+        return view('relation.register_subjects', compact('subjects', 'student'));
+    }
+
+    public function register_subjects_submit(Request $request)
+    {
+        // dd($request->all());
+        $studnt = Student::find(1);
+
+        // attach
+        // detach
+        // sync
+        $studnt->subjects()->sync( $request->register_subject );
+
+        return redirect()->back();
+
+    }
 }

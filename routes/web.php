@@ -189,3 +189,6 @@ Route::get('all-products', [RelationController::class, 'all_products'])->name('a
 Route::get('all-products/{id}', [RelationController::class, 'single_products'])->name('single_products');
 
 Route::delete('delete-image/{id}', [ProductController::class, 'delete_image']);
+
+Route::get('/register-subjects', [RelationController::class, 'register_subjects']);
+Route::post('/register-subjects', [RelationController::class, 'register_subjects_submit'])->name('register_subjects_submit');

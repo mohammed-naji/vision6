@@ -67,6 +67,12 @@
             object-fit: contain;
             border: 1px solid #eee;
             padding: 10px;
+            opacity: .3;
+        }
+
+        .product-gallery img.active,
+        .product-gallery img:hover  {
+            opacity: 1;
         }
 
         #main-image {
@@ -105,8 +111,9 @@
 
                 @if ($product->images->count() > 0)
                 <ul class="product-gallery">
+                    <li><img class="active" onclick="changeImage(event)" src="{{ asset('uploads/images/'.$product->image) }}" alt=""></li>
                     @foreach ($product->images as $image)
-                        <li><img onclick="changeImage('{{ asset('uploads/images/'.$image->path) }}')" src="{{ asset('uploads/images/'.$image->path) }}" alt=""></li>
+                        <li><img onclick="changeImage(event)" src="{{ asset('uploads/images/'.$image->path) }}" alt=""></li>
                     @endforeach
                 </ul>
 
@@ -139,10 +146,15 @@
 
     <script>
 
-function changeImage(path) {
-    // console.log(path);
+function changeImage(e) {
+    console.log(e.target.src);
 
-    document.querySelector('#main-image').src = path;
+    // var old = document.querySelector('#main-image').src
+    document.querySelector('#main-image').src = e.target.src;
+    // e.target.src = old;
+
+    document.querySelector('img.active').classList.remove('active');
+    e.target.classList.add('active');
 }
 
     </script>
