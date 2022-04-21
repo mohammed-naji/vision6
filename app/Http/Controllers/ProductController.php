@@ -138,7 +138,7 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required',
             'image' => 'nullable|image|mimes:png,jpg,svg',
-            'description' => 'required',
+            // 'description' => 'required',
             'price' => 'required',
             'category_id' => 'required'
         ]);
@@ -157,14 +157,7 @@ class ProductController extends Controller
 
         }
 
-        $item = $product->update([
-            'name' => $request->name,
-            'image' => $new_name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'discount' => $request->discount,
-            'category_id' => $request->category_id,
-        ]);
+        $item = $product->update($request->all());
 
         if($request->has('gallery')) {
             foreach($request->gallery as $item) {
@@ -212,5 +205,15 @@ class ProductController extends Controller
     public function delete_image($id)
     {
         return Image::destroy($id);
+    }
+
+    public function delete_all()
+    {
+        Product::truncate();
+    }
+
+    public function delete_selected(Request $request)
+    {
+        return Product::whereIn('id', $request->items)->delete();
     }
 }

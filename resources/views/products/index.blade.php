@@ -82,8 +82,10 @@
         {{-- {{ $products->count() }} --}}
 
         <div class="content-wrapper">
-            @include('products._table');
+            @include('products._table')
         </div>
+        <button class="btn btn-danger" id="delete_all">Delete All</button>
+        <button class="btn btn-danger" style="display: none" id="delete_selected">Delete Selected</button>
 {{--
         <a href="{{ route('show_msg') }}" id="btn" class="btn btn-success">Load Data From Controller</a>
         <p id="show_msg"></p> --}}
@@ -92,8 +94,163 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script>
 
+        $('.btn-edit').click(function(e) {
+
+            if($(this).hasClass('open')) {
+                $(this).parents('tr').find('span').show();
+                $(this).parents('tr').find('input:not(input[type=checkbox])').hide();
+                $(this).addClass('btn-primary');
+                $(this).removeClass('btn-success');
+                $(this).removeClass('open');
+                $(this).find('i').addClass('fa-edit')
+                $(this).find('i').removeClass('fa-check');
+
+
+
+                // Send Ajax Request
+                var name = $(this).parents('tr').find('input[name=name]').val();
+                // var image = $(this).parents('tr').find('input[name=image]').val();
+                var price = $(this).parents('tr').find('input[name=price]').val();
+                var discount = $(this).parents('tr').find('input[name=discount]').val();
+                var category_id = $(this).parents('tr').find('.category').text();
+
+                // console.log(name, image, price, discount, category_id);
+                // FormData()
+                $.ajax({
+                    type: 'post',
+                    url: $(this).data('url'),
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        _method: 'put',
+                        name: name,
+                        price: price,
+                        discount: discount,
+                        category_id: category_id
+                    },
+                    success: function() {
+                        console.log('Done');
+                    }
+                })
+
+            }else {
+                $(this).parents('tr').find('span').hide();
+                $(this).parents('tr').find('input').show();
+                $(this).removeClass('btn-primary');
+                $(this).addClass('btn-success');
+                $(this).addClass('open');
+                $(this).find('i').removeClass('fa-edit')
+                $(this).find('i').addClass('fa-check');
+            }
+
+        })
+
+        $('td input').keyup(function() {
+            $(this).parent().find('span').text($(this).val());
+        })
+
+        // $('body').on('click', '.btn-save', function() {
+        //     alert(5)
+        //     $(this).parents('tr').find('span').show();
+        //     $(this).parents('tr').find('input').hide();
+        //     $(this).addClass('btn-primary');
+        //     $(this).removeClass('btn-success');
+        //     $(this).find('i').addClass('fa-edit')
+        //     $(this).find('i').removeClass('fa-check');
+        //     $(this).addClass('btn-edit');
+        //     $(this).removeClass('btn-save');
+        // })
+
+        $('#select_all').change(function() {
+            $('tbody input[type=checkbox]').prop('checked', $(this).prop('checked'));
+            if($(this).prop('checked')) {
+                $('#delete_selected').show();
+            }else {
+                $('#delete_selected').hide();
+            }
+        })
+
+        $('.select_item').change(function() {
+
+            var show = false;
+
+
+            $('.select_item').each((key, el) => {
+                if(el.checked) {
+                    show = true;
+                }
+            });
+
+            if(show) {
+                $('#delete_selected').show();
+            }else {
+                $('#delete_selected').hide();
+            }
+
+        })
+
+
+        $('#delete_all').click(function(e) {
+            e.preventDefault();
+
+            var empty_tr = `<tr>
+                        <td colspan="7" class="text-center">No Data Found</td>
+                    </tr>`;
+
+            if(confirm('Are you sure?')) {
+                $.ajax({
+                    type: 'get',
+                    url: '{{ route("delete_all") }}',
+                    success: function(res) {
+                        $('table tbody').html(empty_tr);
+                    }
+                })
+            }
+
+        })
+
+        $('#delete_selected').click(function(e) {
+            e.preventDefault();
+
+            var empty_tr = `<tr>
+                        <td colspan="7" class="text-center">No Data Found</td>
+                    </tr>`;
+
+            var items = [];
+            $('.select_item').each((key, el) => {
+                if(el.checked) {
+                    items.push(el.value)
+                }
+            });
+
+            if(confirm('Are you sure?')) {
+                $.ajax({
+                    type: 'get',
+                    url: '{{ route("delete_selected") }}',
+                    data: {
+                        items: items
+                    },
+                    success: function(res) {
+
+                        $('.select_item').each((key, el) => {
+                            if(el.checked) {
+                                el.parentNode.parentNode.remove()
+                            }
+                        });
+
+                        console.log($('table tbody tr').length);
+
+                        if($('table tbody tr').length == 0) {
+                            $('table tbody').append(empty_tr);
+                        }
+
+                    }
+                })
+            }
+
+        });
         // @if (session('msg'))
         // $('html, body').animate({
         //     scrollTop: $('.alert-success').offset().top
@@ -101,22 +258,22 @@
         // @endif
 
         const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
         })
 
         @if (session('msg'))
         Toast.fire({
-        icon: 'success',
-        title: '{{ session("msg") }}'
-        })
+            icon: 'success',
+            title: '{{ session("msg") }}'
+            })
         @endif
 
         $(document).ready( function () {

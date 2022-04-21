@@ -192,3 +192,7 @@ Route::delete('delete-image/{id}', [ProductController::class, 'delete_image']);
 
 Route::get('/register-subjects', [RelationController::class, 'register_subjects']);
 Route::post('/register-subjects', [RelationController::class, 'register_subjects_submit'])->name('register_subjects_submit');
+
+
+Route::get('delete_all', [ProductController::class, 'delete_all'])->name('delete_all');
+Route::get('delete_selected', [ProductController::class, 'delete_selected'])->name('delete_selected');
